@@ -1,5 +1,3 @@
-//reads from all tags with _o in the tag name and writes them to the corresponding tag with _i.
-//for example mytag_o11 writes to mytag_i11
 require ("Application");
 
 class Adder Application
@@ -30,7 +28,10 @@ method Adder.constructor ()
 		val = datahub_read(string("dynamic:",p.name))[0].value;
 		princ(val,"\n");
 			
-		datahub_write(string(writeto),val);
+		datahub_write(string(writeto),val+1);
+		
+		val2 = datahub_read(string(writeto))[0].value;
+		princ(val2,"\n");
 
 
 
