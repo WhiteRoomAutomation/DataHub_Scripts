@@ -4,6 +4,8 @@ require ("Application");
 require("Time.g");
 require("Quality.g");
 
+require ("WindowsSupport");
+
 /* Get the Gamma library functions and methods for ODBC and/or
  * Windows programming.  Uncomment either or both. */
 
@@ -77,9 +79,41 @@ method IncrementInputs.write ()
 
 /* Write the 'main line' of the program here. */
 
+method IncrementInputs.loadTags()
+{
+	local points = datahub_points("dynamic");
+
+	with p in points do
+
+	{
+		
+			cmdDelete = string("(delete dynamic:",p.name,")");
+			princ(cmdDelete,"\n");
+			datahub_command(cmdDelete,0);
+
+	}
+	
+		local		fptr = open ("c:/temp/config.csv", "r", nil);
+    local		line, i;
+    if (fptr)
+    {
+        while ((line = read_line(fptr)) != _eof_)
+		{
+			
+				princ(line,"\n");
+				cmdString = string("(create dynamic:",line,")");
+				princ(cmdString,"\n");
+				datahub_command (cmdString, 1);
+
+		}
+	}
+}
+
 method IncrementInputs.constructor ()
 {
-	
+	.loadTags();
+			
+
 	local points = datahub_points("dynamic");
 
 	with p in points do
