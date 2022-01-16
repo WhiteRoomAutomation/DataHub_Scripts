@@ -1,6 +1,8 @@
 /* All user scripts should derive from the base "Application" class */
 
 require ("Application");
+require("Time.g");
+require("Quality.g");
 
 /* Get the Gamma library functions and methods for ODBC and/or
  * Windows programming.  Uncomment either or both. */
@@ -20,6 +22,31 @@ class IncrementInputs Application
 {
 }
 
+
+method IncrementInputs.setbad ()
+{
+	local points2 = datahub_points("dynamic",t,"*_i*");
+
+	with p in points2 do
+
+	{
+		
+		
+		
+			local val = datahub_read(string("dynamic:",p.name))[0].value;
+			princ("IncrementInputs:BAD: ",val,"\n");
+			
+			
+				datahub_write(string("dynamic:",p.name),val,OPC_QUALITY_BAD,GetCurrentWindowsTime());
+				
+				
+				
+
+
+	}
+	
+}
+	
 /* Use methods to create functions outside the 'main line'. */
 method IncrementInputs.write ()
 {
@@ -32,15 +59,21 @@ method IncrementInputs.write ()
 		
 		
 		
-			val = datahub_read(string("dynamic:",p.name))[0].value;
+			local val = datahub_read(string("dynamic:",p.name))[0].value;
 			princ("IncrementInputs: ",val,"\n");
 			
 			
-				datahub_write(string("dynamic:",p.name),val +1);
+				datahub_write(string("dynamic:",p.name),val+1,OPC_QUALITY_GOOD);
+				.TimerAfter(60, `(@self).setbad());
+				
+				
 
 
 	}
 }
+
+	
+
 
 /* Write the 'main line' of the program here. */
 
@@ -58,7 +91,7 @@ method IncrementInputs.constructor ()
 
 	}
 	princ("IncrementInputs Start","\n");
- .TimerEvery(45, `(@self).write());
+ .TimerEvery(120, `(@self).write());
 }
 
 /* Any code to be run when the program gets shut down. */
